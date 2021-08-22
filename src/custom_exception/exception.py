@@ -7,9 +7,9 @@ class SingletonException(Exception):
         """
 
     def __init__(self, cls_name, message="SingletonException: There is already one instance of this object"):
-        self.cls_name = cls_name
-        self.message = message
-        super().__init__(self.message)
+        self.__cls_name = cls_name
+        self.__message = message
+        super().__init__(self.__message)
 
     def __str__(self):
-        return f"{self.cls_name} {self.message}"
+        return f"{self.__cls_name} {self.__message}"

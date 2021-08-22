@@ -5,8 +5,9 @@ from src.Consts.settings import *
 class CollisionMasks(Enum):
     WALLS = 1
     BUILDINGS = 2
-    ENEMIES = 3
+    ENEMY = 3
     PLAYER = 4
+    BULLET=5
     
 class CollisionPositions(Enum):
     NO_CLLOISTION = 0
@@ -15,7 +16,7 @@ class CollisionPositions(Enum):
     LEFT = 3
     RIGHT = 4
 
-
+import math
 class Collider:
     """
     An object that responsible for checking collision between objects
@@ -23,36 +24,64 @@ class Collider:
     COLLIDER_HEIGHT_OFFSET = 15 # In order to make the collider fit the object better
 
     def __init__(self, x, y, width, height, mask: CollisionMasks, masks_to_collide_with: tuple):
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height - Collider.COLLIDER_HEIGHT_OFFSET
-        self.mask = mask
-        self._masks_to_collide_with = masks_to_collide_with
-        self.collision = None # Will be equal to the sprite this object collided with in current frame
-        self.collistion_positions = [] # In which border of the collider did the collide occurred
-        
+        self.__x = x
+        self.__y = y
+        self.__width = width
+        self.__height = height - Collider.COLLIDER_HEIGHT_OFFSET
+        self.__mask = mask
+        self.__masks_to_collide_with = masks_to_collide_with
+        self.__collision = None # Will be equal to the sprite this object collided with in current frame
+        self.__collistion_positions = []# In which border of the collider did the collide occurred
+
     def update(self, x, y):
         """
         Update the collider position
         """
-        self.x = x
-        self.y = y
+        self.__x = x
+        self.__y = y
+
+    @property
+    def collision(self):
+        return self.__collision
+
+    @property
+    def x(self):
+        return self.__x
+
+    @property
+    def y(self):
+        return self.__y
+
+    @property
+    def width(self):
+        return self.__width
+
+    @property
+    def height(self):
+        return self.__height
+
+    @property
+    def mask(self):
+        return self.__mask
+
+    @property
+    def collistion_positions(self):
+        return self.__collistion_positions
 
     def late_update(self):
         self._reset_collision()
 
     def _reset_collision(self):
-        self.collision = None
-        self.collistion_positions = []
+        self.__collision = None
+        self.__collistion_positions = []
 
     def _get_collision_pos(self) -> list:
         collistions = []
-        if self.y > self.collision.collider.y:
+        if self.__y > self.collision.collider.y:
             collistions.append(CollisionPositions.TOP)
         else:
             collistions.append(CollisionPositions.BOTTOM)
-        if self.x > self.collision.collider.x:
+        if self.__x > self.collision.collider.x:
             collistions.append(CollisionPositions.LEFT)
         else:
             collistions.append(CollisionPositions.RIGHT)
@@ -68,8 +97,7 @@ class Collider:
         """
         for sprite in sprites:
             collider = sprite.collider
-            if collider is not self and collider.mask in self._masks_to_collide_with:
-                if utilitiez.on_object(self.x,self.y,self.width,self.height,collider.x,collider.y,collider.width,collider.height):
-                    self.collision = sprite
-                    self.collistion_positions = self._get_collision_pos()
-
+            if collider is not self and collider.mask in self.__masks_to_collide_with:
+                if utilitiez.on_object(self.__x, self.__y, self.__width, self.__height, collider.x, collider.y, collider.width, collider.height):
+                    self.__collision = sprite
+                    self.__collistion_positions = self._get_collision_pos()

@@ -1,6 +1,5 @@
-try:
-    1/0
-except:
-    pass
-finally:
-    print(":fe")
+l = ['a','b','c']
+
+l.remove('b')
+
+print(l)
