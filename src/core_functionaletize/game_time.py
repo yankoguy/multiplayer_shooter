@@ -14,13 +14,13 @@ class GlobalTime(metaclass=Singleton):
     __clock = pg.time.Clock()
 
     def __init__(self):
-        self._fps_text = Text(50, 0, "", 30)
+        self._fps_text = Text(50, 0, "fps: ", str(GlobalTime._get_fps_rate()) , 30)
         EventListener.fire_events(WORLD_ADD_OBJECT, self._fps_text)
 
     def update(self):
         GlobalTime.__delta_time = GlobalTime.__clock.tick(FPS) / 1000
         GlobalTime._running_time = GlobalTime.__delta_time
-        self._fps_text.change_text(f"fps: {GlobalTime._get_fps_rate()}")
+        self._fps_text.change_text(str(GlobalTime._get_fps_rate()))
 
     @classmethod
     def delta_time(cls):

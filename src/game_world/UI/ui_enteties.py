@@ -13,17 +13,18 @@ class Text(RenderAbleObj):
     A class used to create texts and change them
     """
 
-    def __init__(self, x, y, text, font_size):
+    def __init__(self, x, y, header, amount="", font_size=30):
         super().__init__(RenderMode.UI_RENDER_MODE)
+        self.__header = header
         self.__font = pg.font.SysFont(COSMIC_SANS_FONT, font_size)
-        self.__text_surface = self.__font.render(text, False, (0, 0, 0))
+        self.__text_surface = self.__font.render(header + amount, False, (0, 0, 0))
         self.__pos = (x, y)
 
     def change_font_size(self, new_font_size):
         self.__font = pg.font.SysFont(COSMIC_SANS_FONT, new_font_size)
 
     def change_text(self, new_text):
-        self.__text_surface = self.__font.render(new_text, False, (0, 0, 0))
+        self.__text_surface = self.__font.render(self.__header + new_text, False, (0, 0, 0))
 
     def render_properties(self) -> tuple:
         return self.__text_surface, self.__pos

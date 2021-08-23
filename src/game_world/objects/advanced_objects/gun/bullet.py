@@ -19,12 +19,14 @@ class Bullet(AliveSprite):
                  speed: int,
                  damage: int,
                  angle: float,
-                 time_to_live:int,
+                 time_to_live: int,
                  sprite_img=None):
-        super().__init__(x, y, obj_width, obj_height, mask, masks_to_collide_with, health, speed, damage, sprite_img)
-        self.__angle = angle # The angle the bullet got shot at
-        self.__vx, self.__vy = 0,0 # The Velocity of the bullet
-        self.__timer_until_died = Timer(time_to_live,self._destroy) # How much time does it takes to the bullet until he disapear
+
+        super().__init__(x, y, obj_width, obj_height,obj_width+3, obj_height+2, mask, masks_to_collide_with, health, speed, damage, sprite_img)
+        self.__angle = angle  # The angle the bullet got shot at
+        self.__vx, self.__vy = 0, 0  # The Velocity of the bullet
+        self.__timer_until_died = Timer(time_to_live,
+                                        self._destroy)  # How much time does it takes to the bullet until he disapear
         self._image, self._rect = self.__rotate_to_angle()
 
     def __rotate_to_angle(self):
@@ -47,22 +49,20 @@ class Bullet(AliveSprite):
         self.__timer_until_died.update_timer()
 
     def late_update(self):
+        self._calculate_velocity()
         self._movement()
         self.__deal_dmg()
         super().late_update()
 
-    def _movement(self):
-        velocity = utilitiez.calculat_new_xy(self._speed * GlobalTime.delta_time(),self.__angle) # Calculate the velocity of the bullet
-        self.__vx += velocity[0] # Add it to the currect velocity
-        self.__vy += velocity[1] # Add it to the currect velocity
-        self.rect.x += int(self.__vx) # Move the bullet
-        self.rect.y += int(self.__vy) # Move the bullet
-        self.__vx -= int(self.__vx) # Subtract from velocity
-        self.__vy -= int(self.__vy) # Subtract from velocity
+    def _calculate_velocity(self):
+        velocity = utilitiez.calculat_new_xy(self._speed * GlobalTime.delta_time(),
+                                             self.__angle)  # Calculate the velocity of the bullet
+        self._vx += velocity[0]  # Add it to the currect velocity
+        self._vy += velocity[1]  # Add it to the currect velocity
 
     def __deal_dmg(self):
         if self.collider.collision is not None:
-           if isinstance(self.collider.collision,AliveSprite):
+            if isinstance(self.collider.collision, AliveSprite):
                 # If object is alive sprite
                 self.collider.collision.take_hit(self._damage)
-                self.take_hit(1) # Bullet takes 1 damgage when hit something
+                self.take_hit(1)  # Bullet takes 1 damgage when hit something

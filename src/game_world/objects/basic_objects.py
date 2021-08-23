@@ -112,14 +112,15 @@ class Sprite(UpdatedObject, ABC):
     And it also supports collision
     attributes:
         mask - An indication to the type of objects that can collide with this object
+        collider width, collider height - the height and the width of the collider
     """
 
     @abstractmethod
-    def __init__(self, x: int, y: int, obj_width: int, obj_height: int, mask: CollisionMasks,
+    def __init__(self, x: int, y: int, obj_width: int, obj_height: int, collider_width: int , collider_height: int,mask: CollisionMasks,
                  masks_to_collide_with: tuple, color=WHITE,
                  sprite_img: str = None):
         super().__init__(x, y, obj_width, obj_height, color, sprite_img)
-        self._collider = Collider(x, y, obj_width, obj_height, mask, masks_to_collide_with)  # The collider is an
+        self._collider = Collider(x, y, collider_width, collider_height, mask, masks_to_collide_with)  # The collider is an
         # object that gives you the information about the sprite collision
 
     @property
@@ -139,16 +140,28 @@ class AliveSprite(Sprite, ABC):
     """
 
     @abstractmethod
-    def __init__(self, x: int, y: int, obj_width: int, obj_height: int, mask: CollisionMasks,
+    def __init__(self, x: int, y: int, obj_width: int, obj_height: int, collider_width:int , collider_height: int, mask: CollisionMasks,
                  masks_to_collide_with: tuple, health: int, speed: int,
                  damage: int,
                  sprite_img=None):
-        Sprite.__init__(self, x, y, obj_width, obj_height, mask, masks_to_collide_with, sprite_img=sprite_img)
+        Sprite.__init__(self, x, y, obj_width, obj_height, collider_width,collider_height, mask,masks_to_collide_with, sprite_img=sprite_img)
         self._health = health
         self._speed = speed
         self._damage = damage
+        self._vx, self._vy = 0,0 # The velocity of the object
 
     def take_hit(self, dmg_to_take):
         self._health -= dmg_to_take
         if self._health <= 0:
             self._destroy()
+
+
+    @abstractmethod
+    def _calculate_velocity(self):
+        pass
+
+    def _movement(self):
+        self.rect.x += int(self._vx) # Move the bullet
+        self.rect.y += int(self._vy) # Move the bullet
+        self._vx -= int(self._vx) # Subtract from velocity
+        self._vy -= int(self._vy) # Subtract from velocity

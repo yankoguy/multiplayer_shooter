@@ -8,7 +8,8 @@ class CollisionMasks(Enum):
     ENEMY = 3
     PLAYER = 4
     BULLET=5
-    
+    COLLECTABLE = 6
+
 class CollisionPositions(Enum):
     NO_CLLOISTION = 0
     TOP = 1
@@ -21,13 +22,12 @@ class Collider:
     """
     An object that responsible for checking collision between objects
     """
-    COLLIDER_HEIGHT_OFFSET = 15 # In order to make the collider fit the object better
 
     def __init__(self, x, y, width, height, mask: CollisionMasks, masks_to_collide_with: tuple):
         self.__x = x
         self.__y = y
         self.__width = width
-        self.__height = height - Collider.COLLIDER_HEIGHT_OFFSET
+        self.__height = height
         self.__mask = mask
         self.__masks_to_collide_with = masks_to_collide_with
         self.__collision = None # Will be equal to the sprite this object collided with in current frame

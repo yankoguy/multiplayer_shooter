@@ -4,13 +4,14 @@ WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 RED = (255, 0, 0)
+YELLOW = (255, 255, 0)
 NO_COLOR = (255,255,255,128)
 DEBUGGING_COLOR = (100,100,100)
 # ------------------WINDOW SIZE------------------------
 WINDOW_HEIGHT = 780
 WINDOW_WIDTH = 1200
 # -----------------GAME LOOP SETTINGS----------------------
-FPS = 500
+FPS = 120
 # -----------------CAMERA SETTINGS----------------------
 CAMERA_SPEED = 500
 # -----------------MAP SETTINGS------------------------
@@ -20,6 +21,8 @@ MAP_WIDTH = 3000
 PLAYER_SPEED = 500
 PLAYER_HEALTH = 100
 PLAYER_POWER = 20
+# -----------------ENEMY SETTINGS-------------------
+BASE_ENEMY_SPEED = 300
 # -----------------TILE SETTINGS----------------------
 TILE_HEIGHT = 60
 TILE_WIDTH = 60
@@ -44,3 +47,5 @@ BASIC_ENEMY_IMAGE = "D:\\Guy\\PycharmProjects\\multiplayer_game\\images\\sprites
 STARTING_MENU = "start menu"
 SETTINGS_MENU = "settings menu"
 SETTINGS2_MENU = "settings2 menu"
+# ------------------ITEMS--------------------
+COINS = "coins"

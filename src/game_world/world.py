@@ -11,8 +11,7 @@ from src.game_world.Map.map import Map
 import debbuging
 from src.game_world.objects.advanced_objects.gun.basic_gun import Gun
 from src.core_functionaletize.event_system import EventListener
-import pygame as pg
-from src.game_world.UI.ui_enteties import Text
+from src.game_world.objects.advanced_objects.items.coin import Coin
 
 
 class World(metaclass=Singleton):
@@ -46,12 +45,12 @@ class World(metaclass=Singleton):
 
 
         # Create object in game--------------------------------------
-        p = Player(400, 300, 30, 50, CollisionMasks.PLAYER,
+        p = Player(400, 300, 30, 50,
                    PLAYER_IMAGE)
 
         self.__add_rederable_object(p)
 
-        be = BasicEnemy(100, 100, 30, 50, CollisionMasks.ENEMY,
+        be = BasicEnemy(100, 100, 30, 50, p,
                         BASIC_ENEMY_IMAGE)
 
         self.__add_rederable_object(be)
@@ -60,6 +59,8 @@ class World(metaclass=Singleton):
 
         self.__add_rederable_object(g)
 
+        c = Coin(300,300,10,10,color = YELLOW)
+        self.__add_rederable_object(c)
 
         # Create menus------------------------------------------
         starting_menu = StartingMenu()
