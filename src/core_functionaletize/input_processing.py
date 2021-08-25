@@ -1,7 +1,7 @@
 import pygame as pg
 from src.core_functionaletize.event_system import EventListener
 from src.Consts.settings import *
-
+from src.multiplayer.client import Client
 
 def key_to_event():
     """
@@ -13,3 +13,4 @@ def key_to_event():
             EventListener.fire_events(KEY_DOWN + str(event.key))
         if event.type == pg.MOUSEBUTTONDOWN:
             EventListener.fire_events(MOUSE_LEFT_CLICK, pg.mouse.get_pos()[0], pg.mouse.get_pos()[1])
+            Client.add_data_to_send("mouse click",1)

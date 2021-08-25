@@ -98,6 +98,12 @@ class UpdatedObject(BaseObject, ABC):
         """
         pass
 
+    def start(self):
+        """
+        What the object will do on his first frame
+        """
+        pass
+
     @property
     def exists(self):
         return self._exists

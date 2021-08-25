@@ -1,5 +1,5 @@
 import pygame as pg
-from src.structures.core_classes import Singleton
+from src.structures.meta_classes import Singleton
 from enum import Enum
 from src.game_world.objects.basic_objects import BaseObject
 from src.Consts.settings import *

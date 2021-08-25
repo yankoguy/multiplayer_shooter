@@ -1,6 +1,6 @@
 import pygame as pg
 from src.Consts.settings import *
-from src.structures.core_classes import Singleton
+from src.structures.meta_classes import Singleton
 from src.game_world.UI.ui_enteties import Text
 from src.core_functionaletize.event_system import EventListener
 

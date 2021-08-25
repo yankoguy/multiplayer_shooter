@@ -13,10 +13,12 @@ class Coin(Sprite):
 
         self.__money = 5  # How much money does the coin contains
 
+
+
     def late_update(self):
         if self.collider.collision is not None:
             # If collides with Player
-            self.collider.collision.items.add_item(COINS, self.__money)
+            self.collider.collision.item_collector.add_item(COINS, self.__money)
             self._destroy()
 
         super().late_update()

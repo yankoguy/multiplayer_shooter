@@ -71,7 +71,8 @@ class Button(BaseObject):
         """
         Function that gets called if the mouse clicked on button
         """
-        self.__function_to_activate(mouse_x_pos, mouse_y_pos)
+        if self.enable:
+            self.__function_to_activate(mouse_x_pos, mouse_y_pos)
 
 
 class Canvas:

@@ -29,6 +29,8 @@ class Bullet(AliveSprite):
                                         self._destroy)  # How much time does it takes to the bullet until he disapear
         self._image, self._rect = self.__rotate_to_angle()
 
+
+
     def __rotate_to_angle(self):
         """
         Returns new rect and image of the sprite in certain angle

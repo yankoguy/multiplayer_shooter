@@ -28,3 +28,5 @@ def calculat_new_xy(speed,angle_in_degrees):
     velocity_x = math.cos(math.radians(angle_in_degrees)) * speed
     velocity_y = math.sin(math.radians(-angle_in_degrees)) * speed
     return velocity_x, velocity_y
+
+

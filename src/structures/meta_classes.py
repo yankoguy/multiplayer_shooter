@@ -30,3 +30,4 @@ class SingletonABC(ABCMeta):
             cls._instances[cls] = super(SingletonABC, cls).__call__(*args, **kwargs)
 
         return cls._instances[cls]
+
