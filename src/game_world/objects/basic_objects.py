@@ -122,10 +122,9 @@ class Sprite(UpdatedObject, ABC):
     """
 
     @abstractmethod
-    def __init__(self, x: int, y: int, obj_width: int, obj_height: int, collider_width: int , collider_height: int,mask: CollisionMasks,
-                 masks_to_collide_with: tuple, color=WHITE,
-                 sprite_img: str = None):
-        super().__init__(x, y, obj_width, obj_height, color, sprite_img)
+    def __init__(self, x: int, y: int, collider_width: int , collider_height: int,mask: CollisionMasks,
+                 masks_to_collide_with: tuple,sprite_img: str):
+        super().__init__(x, y, 0, 0, object_img = sprite_img)
         self._collider = Collider(x, y, collider_width, collider_height, mask, masks_to_collide_with)  # The collider is an
         # object that gives you the information about the sprite collision
 
@@ -146,11 +145,11 @@ class AliveSprite(Sprite, ABC):
     """
 
     @abstractmethod
-    def __init__(self, x: int, y: int, obj_width: int, obj_height: int, collider_width:int , collider_height: int, mask: CollisionMasks,
+    def __init__(self, x: int, y: int, collider_width:int , collider_height: int, mask: CollisionMasks,
                  masks_to_collide_with: tuple, health: int, speed: int,
                  damage: int,
                  sprite_img=None):
-        Sprite.__init__(self, x, y, obj_width, obj_height, collider_width,collider_height, mask,masks_to_collide_with, sprite_img=sprite_img)
+        Sprite.__init__(self, x, y, collider_width,collider_height, mask,masks_to_collide_with, sprite_img=sprite_img)
         self._health = health
         self._speed = speed
         self._damage = damage

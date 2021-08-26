@@ -13,7 +13,7 @@ class Bullet(AliveSprite):
     time_to_live how many seconds the bullet is going to live
     """
 
-    def __init__(self, x: int, y: int, obj_width: int, obj_height: int, mask: CollisionMasks,
+    def __init__(self, x: int, y: int, collider_width: int, collider_height: int, mask: CollisionMasks,
                  masks_to_collide_with: tuple,
                  health: int,
                  speed: int,
@@ -22,7 +22,7 @@ class Bullet(AliveSprite):
                  time_to_live: int,
                  sprite_img=None):
 
-        super().__init__(x, y, obj_width, obj_height,obj_width+3, obj_height+2, mask, masks_to_collide_with, health, speed, damage, sprite_img)
+        super().__init__(x, y,collider_width, collider_height, mask, masks_to_collide_with, health, speed, damage, sprite_img=sprite_img)
         self.__angle = angle  # The angle the bullet got shot at
         self.__vx, self.__vy = 0, 0  # The Velocity of the bullet
         self.__timer_until_died = Timer(time_to_live,

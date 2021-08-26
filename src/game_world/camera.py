@@ -37,9 +37,16 @@ class Camera(metaclass=Singleton):
     @classmethod
     def normal_to_world_pos(cls,pos):
         """
-        get the position of normal object (like mouse) to world pos
+        get the position of an object which is not affected by camera (like mouse) to world pos
         """
         return pos[0] - cls.__x_offset, pos[1] - cls.__y_offset
+
+    @classmethod
+    def screen_pos_to_world_pos(cls,pos):
+        """
+        get the position of screen object (like rect) to world pos
+        """
+        return pos[0] + cls.__x_offset, pos[1] + cls.__y_offset
 
     """
     def _camera_movement(self, delta_time):

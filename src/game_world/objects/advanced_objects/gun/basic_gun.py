@@ -70,7 +70,7 @@ class Gun(UpdatedObject,NetworkObject):
         return self.__rotate_to_mouse(angle)
 
     def __shoot(self, *args):
-        bullet = Bullet(self.rect.x, self.rect.y, 5, 5, CollisionMasks.BULLET, (CollisionMasks.ENEMY,), 1, BULLET_SPEED, 20,
+        bullet = Bullet(self.rect.x, self.rect.y, 10,10, CollisionMasks.BULLET, (CollisionMasks.ENEMY,), 1, BULLET_SPEED, 20,
                         self.__current_angle, BULLET_TIME_TO_LIVE,
                         BULLET_IMAGE)
 

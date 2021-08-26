@@ -10,8 +10,8 @@ class BasicEnemy(AliveSprite):
     An enemy that chase the player
     """
 
-    def __init__(self, x, y, obj_width, obj_height, targets:list, sprite_img: str):
-        super().__init__(x, y, obj_width, obj_height,obj_width, obj_height-15, CollisionMasks.ENEMY, (CollisionMasks.PLAYER,), PLAYER_HEALTH, BASE_ENEMY_SPEED,
+    def __init__(self, x, y, collider_width, collider_height, targets:list, sprite_img: str):
+        super().__init__(x, y, collider_width, collider_height, CollisionMasks.ENEMY, (CollisionMasks.PLAYER,), PLAYER_HEALTH, BASE_ENEMY_SPEED,
                          PLAYER_POWER,
                          sprite_img=sprite_img)
         self._players = targets # Where the enemy should go

@@ -15,8 +15,8 @@ class Player(AliveSprite, NetworkObject):
     The Player is the object that the user has control on
     """
 
-    def __init__(self, x, y, obj_width, obj_height, sprite_img: str):
-        AliveSprite.__init__(self, x, y, obj_width, obj_height, obj_width, obj_height - 15, CollisionMasks.PLAYER,
+    def __init__(self, x, y, cllider_width, collider_height, sprite_img: str):
+        AliveSprite.__init__(self, x, y, cllider_width, collider_height, CollisionMasks.PLAYER,
                              (CollisionMasks.ENEMY,), PLAYER_HEALTH,
                              PLAYER_SPEED, PLAYER_POWER,
                              sprite_img=sprite_img)

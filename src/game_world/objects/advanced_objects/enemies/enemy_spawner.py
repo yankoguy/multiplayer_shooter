@@ -22,6 +22,6 @@ class Spawner:
         spawns an enemy near spawner
         """
         enemy = BasicEnemy(self.__pos[0] + random.randint(-10,10),self.__pos[1] + random.randint(-10,10),
-                           10,10,self.__enemy_targets,BASIC_ENEMY_IMAGE)
+                           30,30,self.__enemy_targets,BASIC_ENEMY_IMAGE)
         self.__timer = Timer(self.__spawn_time,self.__spawn_enemy)
         EventListener.fire_events(WORLD_ADD_OBJECT, enemy)

@@ -63,7 +63,7 @@ class World(metaclass=Singleton):
 
         self.__add_rederable_object(g2)
 
-        c = Coin(300, 300, 10, 10, color=YELLOW)
+        c = Coin(300, 300, 10, 10, sprite_img=COIN_IMAGE)
         self.__add_rederable_object(c)
 
         # Create menus------------------------------------------

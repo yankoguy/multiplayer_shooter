@@ -8,5 +8,5 @@ def show_colliders_object(screen,sprites:list) -> None:
     """
     for sprite in sprites:
         collider = sprite.collider
-        world_pos = Camera.normal_to_world_pos((sprite.rect.x,sprite.rect.y))
-        pg.draw.rect(screen, BLACK, (collider.x,collider.y, collider.width, collider.height), 1)
+        world_pos = Camera.screen_pos_to_world_pos((sprite.rect.x,sprite.rect.y))
+        pg.draw.rect(screen, BLACK, (world_pos[0],world_pos[1], collider.width, collider.height), 1)

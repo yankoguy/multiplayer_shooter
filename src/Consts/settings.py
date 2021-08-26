@@ -24,7 +24,7 @@ PLAYER_POWER = 20
 # -----------------ENEMY SETTINGS-------------------
 BASE_ENEMY_SPEED = 300
 # --------------------BULLET SETTINGS----------------
-BULLET_SPEED = 1000
+BULLET_SPEED = 500
 BULLET_TIME_TO_LIVE = 3
 # -----------------TILE SETTINGS----------------------
 TILE_HEIGHT = WINDOW_HEIGHT / 5
@@ -47,6 +47,7 @@ ONLINE_PLAYER_IMAGE = "D:\\Guy\\PycharmProjects\\multiplayer_game\\images\\sprit
 GUN_IMAGE = "D:\\Guy\\PycharmProjects\\multiplayer_game\\images\\sprites\\gun.png"
 BULLET_IMAGE = "D:\\Guy\\PycharmProjects\\multiplayer_game\\images\\sprites\\bullet.png"
 BASIC_ENEMY_IMAGE = "D:\\Guy\\PycharmProjects\\multiplayer_game\\images\\sprites\\basic_enemy.png"
+COIN_IMAGE = "D:\\Guy\\PycharmProjects\\multiplayer_game\\images\\sprites\\coin.png"
 # ------------------MENUS-----------------------
 STARTING_MENU = "start menu"
 MATCHMAKING_MENU = "matchmaking menu"

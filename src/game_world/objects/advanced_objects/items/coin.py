@@ -7,9 +7,8 @@ class Coin(Sprite):
     """
     Coin is an object that represen money
     """
-    def __init__(self, x: int, y: int, obj_width: int, obj_height: int, color=WHITE,
-                 sprite_img: str = None):
-        super().__init__(x, y, obj_width, obj_height, obj_width, obj_height, CollisionMasks.COLLECTABLE, (CollisionMasks.PLAYER,), color=color)
+    def __init__(self, x: int, y: int, collider_width: int, coliider_height: int,sprite_img: str):
+        super().__init__(x, y, collider_width, coliider_height, CollisionMasks.COLLECTABLE, (CollisionMasks.PLAYER,),sprite_img=sprite_img)
 
         self.__money = 5  # How much money does the coin contains
 
