@@ -9,7 +9,7 @@ class StartingMenu(metaclass=Singleton):
     def __init__(self):
         self.__canvas = Canvas()
         b_1_t = Text(0, 0, "Start game" , "" , 40)
-        b_1 = Button(500, 500, 100, 100, BLUE, self.__start_game,b_1_t)
+        b_1 = Button(500, 500, 100, 100, YELLOW, self.__start_game,b_1_t)
 
         t_1 = Text(500, 50, "Welcome to start menu" , "" , 40)
         self.__canvas.add_ui_object(b_1)
@@ -52,10 +52,10 @@ class SettingsMenu(metaclass=Singleton):
     def __init__(self):
         self.__canvas = Canvas()
         b_1_text =  Text(0, 0, "go back to game", "", 20)
-        b_1 = Button(400, 500, 100, 100, BLUE, self.__return_to_game,b_1_text)
+        b_1 = Button(400, 500, 100, 100, YELLOW, self.__return_to_game,b_1_text)
 
         b_2_text =  Text(0, 0, "go to settings 2", "", 20)
-        b_2 = Button(100, 500, 100, 100, BLUE, self.__go_to_settings_two_menu,b_2_text)
+        b_2 = Button(100, 500, 100, 100, YELLOW, self.__go_to_settings_two_menu,b_2_text)
 
         t_1 = Text(500, 50, "Welcome to settings menu", "", 40)
         self.__canvas.add_ui_object(b_1)
@@ -84,7 +84,7 @@ class Setting2sMenu(metaclass=Singleton):
     def __init__(self):
         self.__canvas = Canvas()
         b_1_text = Text(0, 0, "go back to game")
-        b_1 = Button(400, 500, 100, 100, BLUE, self.__return_to_game, b_1_text)
+        b_1 = Button(400, 500, 100, 100, YELLOW, self.__return_to_game, b_1_text)
 
         t_1 = Text(500, 50, "Welcome to settings2 menu")
         self.__canvas.add_ui_object(b_1)

@@ -4,6 +4,8 @@ from src.game_world.objects.collision import CollisionMasks
 from src.core_functionaletize.game_time import GlobalTime
 import math
 from src.core_functionaletize.game_time import Timer
+from src.game_world.objects.advanced_objects.items.coin import Coin
+from src.core_functionaletize.event_system import EventListener
 
 class BasicEnemy(AliveSprite):
     """
@@ -56,3 +58,7 @@ class BasicEnemy(AliveSprite):
         self._attack_timer.update_timer()
 
         super().late_update()
+
+    def die(self):
+        c = Coin(self.rect.x, self.rect.y, 10, 10, sprite_img=COIN_IMAGE)
+        EventListener.fire_events(WORLD_ADD_OBJECT,c)

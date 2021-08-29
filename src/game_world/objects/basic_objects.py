@@ -18,6 +18,7 @@ class RenderAbleObj(ABC):
     def __init__(self, render_mode: RenderMode):
         self._render_mode = render_mode
         self._enable = True
+        self._exists = True  # If this parameter is False the object will be removed from game
 
     @abstractmethod
     def render_properties(self) -> tuple:
@@ -40,6 +41,15 @@ class RenderAbleObj(ABC):
     def hide(self):
         self._enable = False
 
+    @property
+    def exists(self):
+        return self._exists
+
+    def destroy(self):
+        """
+        Makes this object to get destroyed in the next update
+        """
+        self._exists = False
 
 class BaseObject(RenderAbleObj, ABC):
     """
@@ -83,7 +93,6 @@ class UpdatedObject(BaseObject, ABC):
     @abstractmethod
     def __init__(self, x: int, y: int, obj_width: int, obj_height: int, color: tuple = WHITE, object_img: str = None):
         super().__init__(x, y, obj_width, obj_height, RenderMode.SPRITE_RENDER_MODE, color, object_img)
-        self._exists = True  # If this parameter is False the object will be removed from game
 
     @abstractmethod
     def update(self):
@@ -104,12 +113,13 @@ class UpdatedObject(BaseObject, ABC):
         """
         pass
 
-    @property
-    def exists(self):
-        return self._exists
+    def die(self):
+        """
+        What will happend when the object will desapear from the game
+        """
+        pass
 
-    def _destroy(self):
-        self._exists = False
+
 
 
 class Sprite(UpdatedObject, ABC):
@@ -158,10 +168,9 @@ class AliveSprite(Sprite, ABC):
     def take_hit(self, dmg_to_take):
         self._health -= dmg_to_take
         if self._health <= 0:
-            self._destroy()
+            self.destroy()
 
 
-    @abstractmethod
     def _calculate_velocity(self):
         pass
 

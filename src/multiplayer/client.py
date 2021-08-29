@@ -24,14 +24,17 @@ class Client(metaclass=Singleton):
         print("Connected sucsefully")
 
     @classmethod
-    def add_data_to_send(cls, msg_type, data):
+    def add_data_to_send(cls, msg_type, data, msg_id=""):
         """
         Add data to send in the current frame
         params:
             msg_type - indicated what data is send (player position/ gun rotation / mouse click)
             data - the information you send to the server (like position/ param)
         """
-        cls.__data_to_send[msg_type] = data
+        if msg_id == "":
+            cls.__data_to_send[msg_type] = data
+        else:
+            cls.__data_to_send[msg_type+str(msg_id)] = data
 
     @classmethod
     def get_data(cls, msg_type):
@@ -46,10 +49,12 @@ class Client(metaclass=Singleton):
         """
         Get new information from the server
         """
-        rlist, _, _ = select.select([self.__client_socket], [], [],0.05)
+        rlist, _, _ = select.select([self.__client_socket], [], [])
         if rlist:
             # Read from server and update data
-            data = pickle.loads(self.__client_socket.recv(1024))
+            data = self.__client_socket.recv(1024)
+            data = pickle.loads(data)
+
             if data == "start":
                 self.communicate = True
             else:

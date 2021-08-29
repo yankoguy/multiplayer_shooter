@@ -13,4 +13,7 @@ def key_to_event():
             EventListener.fire_events(KEY_DOWN + str(event.key))
         if event.type == pg.MOUSEBUTTONDOWN:
             EventListener.fire_events(MOUSE_LEFT_CLICK, pg.mouse.get_pos()[0], pg.mouse.get_pos()[1])
-            Client.add_data_to_send("mouse click",1)
+            Client.add_data_to_send(NETWORK_MOUSE_LEFT_CLICK,1)
+    if pg.mouse.get_pressed()[0]:
+        EventListener.fire_events(MOUSE_LEFT_PRESSED)
+        Client.add_data_to_send(NETWORK_MOUSE_LEFT_PRESSED, 1)

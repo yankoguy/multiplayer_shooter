@@ -2,7 +2,6 @@ from src.game_world.objects.basic_objects import Sprite
 from src.Consts.settings import *
 from src.game_world.objects.collision import CollisionMasks
 
-
 class Coin(Sprite):
     """
     Coin is an object that represen money
@@ -18,6 +17,5 @@ class Coin(Sprite):
         if self.collider.collision is not None:
             # If collides with Player
             self.collider.collision.item_collector.add_item(COINS, self.__money)
-            self._destroy()
-
+            self.destroy()
         super().late_update()

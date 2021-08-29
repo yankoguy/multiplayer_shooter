@@ -4,7 +4,7 @@ from src.game_world.objects.collision import CollisionMasks
 from src.core_functionaletize.game_time import GlobalTime
 import src.core_functionaletize.utilitiez as utilitiez
 from src.core_functionaletize.game_time import Timer
-
+from src.Consts.settings import  *
 
 class Bullet(AliveSprite):
     """
@@ -13,23 +13,17 @@ class Bullet(AliveSprite):
     time_to_live how many seconds the bullet is going to live
     """
 
-    def __init__(self, x: int, y: int, collider_width: int, collider_height: int, mask: CollisionMasks,
+    def __init__(self, x: int, y: int, mask: CollisionMasks,
                  masks_to_collide_with: tuple,
-                 health: int,
-                 speed: int,
-                 damage: int,
-                 angle: float,
-                 time_to_live: int,
+                 angle: float, health:int,speed:int,power:int,
                  sprite_img=None):
 
-        super().__init__(x, y,collider_width, collider_height, mask, masks_to_collide_with, health, speed, damage, sprite_img=sprite_img)
+        super().__init__(x, y,BULLET_WIDTH, BULLET_HEIGHT, mask, masks_to_collide_with, health, speed, power, sprite_img=sprite_img)
         self.__angle = angle  # The angle the bullet got shot at
         self.__vx, self.__vy = 0, 0  # The Velocity of the bullet
-        self.__timer_until_died = Timer(time_to_live,
-                                        self._destroy)  # How much time does it takes to the bullet until he disapear
+        self.__timer_until_died = Timer(BULLET_TIME_TO_LIVE,
+                                        self.destroy)  # How much time does it takes to the bullet until he disapear
         self._image, self._rect = self.__rotate_to_angle()
-
-
 
     def __rotate_to_angle(self):
         """

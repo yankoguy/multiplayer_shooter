@@ -2,7 +2,7 @@ import pygame as pg
 from src.Consts.settings import *
 from src.structures.meta_classes import Singleton
 from src.core_functionaletize.game_time import GlobalTime
-
+import src.core_functionaletize.utilitiez as  utilitiez
 """
 The camera is responsible of representing specific objects to the screen
 """
@@ -35,45 +35,27 @@ class Camera(metaclass=Singleton):
 
 
     @classmethod
-    def normal_to_world_pos(cls,pos):
+    def normal_to_world_pos(cls,pos) -> tuple:
         """
         get the position of an object which is not affected by camera (like mouse) to world pos
         """
         return pos[0] - cls.__x_offset, pos[1] - cls.__y_offset
 
     @classmethod
-    def screen_pos_to_world_pos(cls,pos):
+    def screen_pos_to_world_pos(cls,pos) -> tuple:
         """
         get the position of screen object (like rect) to world pos
         """
         return pos[0] + cls.__x_offset, pos[1] + cls.__y_offset
 
-    """
-    def _camera_movement(self, delta_time):
-        self.vx, self.vy = 0, 0
-        keys = pg.key.get_pressed()
 
-        if (keys[pg.K_LEFT] or keys[pg.K_a]) and self._camera_view.x < WINDOW_WIDTH:
-            # Checks for right border
-            self.vx = self._camera_move_speed
+    @classmethod
+    def is_on_camera(cls,x,y,width,height) -> bool:
+        """
+        Returns if an object is visable to player
+        """
+        if utilitiez.on_object(-cls.__x_offset,-cls.__y_offset
+                ,WINDOW_WIDTH,WINDOW_HEIGHT,x,y,width,height):
+                    return True
 
-        if (keys[pg.K_RIGHT] or keys[pg.K_d]) and self._camera_view.x > -WINDOW_WIDTH:
-            # Checks for left border
-            self.vx -= self._camera_move_speed
-
-        if (keys[pg.K_UP] or keys[pg.K_w]) and self._camera_view.y < WINDOW_HEIGHT:
-            # Checks for top border
-            self.vy = self._camera_move_speed
-
-        if (keys[pg.K_DOWN] or keys[pg.K_s]) and self._camera_view.y > -WINDOW_HEIGHT:
-            # Checks for bottom border
-            self.vy -= self._camera_move_speed
-
-        if self.vx != 0 and self.vy != 0:
-            # Apply diagonal movement
-            self.vx *= 0.7071
-            self.vy *= 0.7071
-
-        self._camera_view.x -= self.vx * delta_time
-        self._camera_view.y -= self.vy * delta_time
-    """
+        return False

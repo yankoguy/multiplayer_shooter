@@ -11,13 +11,14 @@ class ItemCollector:
     TEXT_INDEX = 1
 
     def __init__(self):
-        self.__items = {COINS : [0,Text(1000, 0, "coins: ", str(0), 20)]}
+        self.__items = {COINS : [0,Text(WINDOW_WIDTH/2, 0, "coins: ", str(0), 20)]}
 
     @property
     def items(self):
         return self.__items
 
     def add_item(self,item,amount):
+        print(amount)
         self.__items[item][ItemCollector.AMOUNT_INDEX] += amount
         self.__update_text(item,amount)
 

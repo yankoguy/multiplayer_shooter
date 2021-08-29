@@ -50,14 +50,14 @@ class Game(metaclass=Singleton):
         """
         Start running game
         """
-       # self.__menu_state(STARTING_MENU)  # first menu
+        #self.__menu_state(STARTING_MENU)  # first menu
         self.__game_loop()
 
     def __update(self):
         """
         Update all the stuff in game
         """
-        if self.__current_menu is None:
+        if self.__current_menu is None or self.__current_menu == SETTINGS_MENU:
             # If we are in game state
             self.__game_clock.update()
             self.__world.update()
@@ -101,7 +101,8 @@ class Game(metaclass=Singleton):
         """
         Go into menu state - pause game and show menu
         """
-        self.__world.hide_all_objects()  # Hide all objects
+        if menu_name != SETTINGS_MENU:
+            self.__world.hide_all_objects()  # Hide all objects
         self.__current_menu = self.__world.menus[menu_name].canvas.show_all()  # Show menu
         self.__current_menu = menu_name
 
@@ -120,4 +121,5 @@ class Game(metaclass=Singleton):
             self.__current_menu = None
 
 
-Game().start()
+if __name__ == "__main__":
+    Game().start()

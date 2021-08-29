@@ -46,16 +46,20 @@ class Timer:
         function_to_activate - which function to call when the timer reaches to zero
     """
 
-    def __init__(self, start_time, function_to_activate):
+    def __init__(self, start_time, function_to_activate=None):
         self.__time = start_time
         self.__function_to_activate = function_to_activate
         self.__pause = False  # Timer can be paused
+        self.finish = False
 
     def update_timer(self):
         if not self.__pause:
-            self.__time -= GlobalTime.delta_time()
             if self.__time <= 0:
-                self.__function_to_activate()
+                self.finish=True
+                if self.__function_to_activate is not None:
+                    self.__function_to_activate()
+            else:
+                self.__time -= GlobalTime.delta_time()
 
     def pause_timer(self):
         self.__pause = True

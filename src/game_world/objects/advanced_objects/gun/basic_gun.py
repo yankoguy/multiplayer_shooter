@@ -6,72 +6,199 @@ from src.core_functionaletize.event_system import EventListener
 from src.game_world.objects.advanced_objects.gun.bullet import Bullet
 from src.game_world.objects.collision import CollisionMasks
 from src.multiplayer.client import Client
-from src.multiplayer.network_object import NetworkObject
 from src.game_world.camera import Camera
+from src.core_functionaletize.game_time import Timer
+from src.game_world.UI.ui_enteties import Text
+from src.multiplayer.network_object import NetworkObject
 
-class Gun(UpdatedObject,NetworkObject):
+
+class Gun(UpdatedObject, NetworkObject):
     """
     Gun is an object that rotate to mouse and can shoot bullets
     attributes:
-        holder - the object the gun should stick to (if it is None it just stays in place)
+        time_between_shots - how much time should you wait before you shoot another shoot
+        ammo - how much ammo does the guy have when you got him
+        max_ammo - what is the maximun ammount of ammo it can have
+        gun_power_multiplier - how much power does the gun adds to the bullet
+        gun_speed_multiplier - how much speed does the gun adds to the bullet
+        online_object - if the gun holds by the onlune player this will be True
     """
 
-    def __init__(self, x: int, y: int, obj_width: int, obj_height: int, holder: object = None,
-                 object_img: str = None):
-        super().__init__(x, y, obj_width, obj_height, WHITE, object_img)
+    def __init__(self, x_offset, y_offset, time_between_shoots: float, ammo: int,
+                 max_ammo: int,
+                 gun_power_multiplier: float, gun_speed_multiplier: float, gun_health_multiplier: int,
+                 object_img: str):
+
+        super().__init__(0, 0, 0, 0, WHITE, object_img)
+
         NetworkObject.__init__(self)
-        if holder is None:
-            holder = self
 
-        self.__current_angle = 0
-        self.__holder = holder
-        self.__x_offset = x - self.__holder.rect.x  # The offset of the gun from the holder
-        self.__y_offset = y - self.__holder.rect.y  # The offset of the gun from the holder
-
-
-    def start(self):
-        if not self._online_object:
-            EventListener.add_handler(MOUSE_LEFT_CLICK, self.__shoot)
+        self._gun_power_multiplier = gun_power_multiplier
+        self._gun_speed_multiplier = gun_speed_multiplier
+        self._gun_health_multiplier = gun_health_multiplier  # How much times can it hit something before die
+        self._time_between_shoots = time_between_shoots
+        self._shot_timer = Timer(self._time_between_shoots)
+        self._ammo = ammo
+        self._max_ammo = max_ammo
+        self._current_angle = 0
+        self._x_offset = x_offset
+        self._y_offset = y_offset
 
     def update(self):
-        self.__stick_to_holder()
-        if self._online_object:
-            if Client.get_data("mouse click") == 1:
-                self.__shoot()
+        self._shot_timer.update_timer()
 
-    def __stick_to_holder(self):
+    def stick_to_holder(self, x, y):
         """
-        Put the gun at the same offset from his owner
+        Changes the gun position (in order to stay near the holder)
         """
-        self._rect.x = self.__holder.rect.x + self.__x_offset
-        self._rect.y = self.__holder.rect.y + self.__y_offset
+        self._rect.x = x + self._x_offset
+        self._rect.y = y + self._y_offset
 
-    def __rotate_to_mouse(self, angle: float):
+    def _rotate_to_mouse(self, angle: float):
         """
               Returns new rect and image of the sprite in certina angle
         """
-        self.__current_angle = angle
+        self._current_angle = angle
         rotated_image = pg.transform.rotate(self._image, angle)
         new_rect = rotated_image.get_rect(center=self._image.get_rect(topleft=self.rect.topleft).center)
         return rotated_image, new_rect
 
+    def _create_bullet_to_shot(self) -> list:
+        return [Bullet(self.rect.x + 5, self.rect.y + 5, CollisionMasks.BULLET, (CollisionMasks.ENEMY,),
+                       self._current_angle,
+                       BULLET_BASE_HEALTH * self._gun_health_multiplier, BULLET_BASE_SPEED * self._gun_speed_multiplier,
+                       BULLET_BASE_POWER * self._gun_power_multiplier,
+                       BULLET_IMAGE)]
+
+    def _shoot(self, *args):
+        if self._ammo > 0 and self._shot_timer.finish:
+            bullets = self._create_bullet_to_shot()
+            for bullet in bullets:
+                EventListener.fire_events(WORLD_ADD_OBJECT, bullet)
+            self._shot_timer = Timer(self._time_between_shoots)  # reset Timer
+            self._ammo -= 1
+
+
+class LocalGun(Gun):
+    def __init__(self, x, y, time_between_shoots: float, ammo: int,
+                 max_ammo: int,
+                 gun_power_multiplier: float, gun_speed_multiplier: float, gun_health_multiplier: int,
+                 object_img: str):
+        super().__init__(x, y, time_between_shoots, ammo, max_ammo, gun_power_multiplier,
+                         gun_speed_multiplier, gun_health_multiplier,
+                         object_img)
+
+        self._ammo_text = Text(WINDOW_WIDTH - 150, 0, "ammo: ", str(self._ammo), 20)
+        EventListener.fire_events(WORLD_ADD_OBJECT, self._ammo_text)
+
+    def die(self):
+        self._ammo_text.destroy()
+
+    def _shoot(self, *args):
+        super()._shoot()
+        self._ammo_text.change_text(str(self._ammo))
+
     def render_properties(self) -> tuple:
-        """
-        Returns how the object should be rendered - image and rect
-        """
-        if not self._online_object:
-            world_pos = Camera.normal_to_world_pos(pg.mouse.get_pos())
-            angle = utilitiez.get_angle(self.rect.x, self.rect.y, world_pos[0], world_pos[1])
-            Client.add_data_to_send("gun rotation", int(angle))
-        else:
-            angle = Client.get_data("gun rotation")
-            if angle is None:
-                angle = self.__current_angle
-        return self.__rotate_to_mouse(angle)
+        world_pos = Camera.normal_to_world_pos(pg.mouse.get_pos())
+        angle = int(utilitiez.get_angle(self.rect.x, self.rect.y, world_pos[0], world_pos[1]))
+        Client.add_data_to_send(NETWORK_GUN_ROTATION, angle)
+        return self._rotate_to_mouse(angle)
 
-    def __shoot(self, *args):
-        bullet = Bullet(self.rect.x, self.rect.y, 10,10, CollisionMasks.BULLET, (CollisionMasks.ENEMY,), 1, BULLET_SPEED, 20,
-                        self.__current_angle, BULLET_TIME_TO_LIVE,
-                        BULLET_IMAGE)
 
-        EventListener.fire_events(WORLD_ADD_OBJECT, bullet)
+class OnlineGun(Gun):
+    def __init__(self, x, y, time_between_shoots: float, ammo: int,
+                 max_ammo: int,
+                 gun_power_multiplier: float, gun_speed_multiplier: float, gun_health_multiplier: int,
+                 object_img: str):
+        super().__init__(x, y, time_between_shoots, ammo, max_ammo, gun_power_multiplier,
+                         gun_speed_multiplier, gun_health_multiplier,
+                         object_img)
+        self._online_object = True
+
+    def render_properties(self) -> tuple:
+        angle = Client.get_data(NETWORK_GUN_ROTATION)
+        if angle is None:
+            angle = self._current_angle
+        return self._rotate_to_mouse(angle)
+
+
+class Pistol(LocalGun):
+    def __init__(self):
+        super().__init__(5, -5, PISTOL_TIME_BETWEEN_SHOTS, PISTOL_AMMO, PISTOL_MAX_AMMO,
+                         PISTOL_POWER_MULTIPLIER, PISTOL_SPEED_MULTIPLIER, PISTOL_HEALTH_MULTIPLIER,
+                         PISTOL_IMAGE)
+        EventListener.add_handler(MOUSE_LEFT_CLICK, self._shoot)
+
+    def die(self):
+        EventListener.remove_handler(MOUSE_LEFT_CLICK, self._shoot)
+        super().die()
+
+
+class OnlinePistol(OnlineGun):
+    def __init__(self):
+        super().__init__(5, -5, PISTOL_TIME_BETWEEN_SHOTS, PISTOL_AMMO, PISTOL_MAX_AMMO,
+                         PISTOL_POWER_MULTIPLIER, PISTOL_SPEED_MULTIPLIER, PISTOL_HEALTH_MULTIPLIER,
+                         PISTOL_IMAGE)
+
+    def update(self):
+        if Client.get_data(NETWORK_MOUSE_LEFT_CLICK):
+            self._shoot()
+        super().update()
+
+
+class Rifle(LocalGun):
+    def __init__(self):
+        super().__init__(10, -10, RIFLE_TIME_BETWEEN_SHOTS, RIFLE_AMMO, RIFLE_MAX_AMMO,
+                         RIFLE_POWER_MULTIPLIER, RIFLE_SPEED_MULTIPLIER, RIFLE_HEALTH_MULTIPLIER,
+                         RIFLE_IMAGE)
+
+        EventListener.add_handler(MOUSE_LEFT_PRESSED, self._shoot)
+
+    def die(self):
+        EventListener.remove_handler(MOUSE_LEFT_PRESSED, self._shoot)
+        super().die()
+
+
+class OnlineRifle(OnlineGun):
+    def __init__(self):
+        super().__init__(10, -10, RIFLE_TIME_BETWEEN_SHOTS, RIFLE_AMMO, RIFLE_MAX_AMMO,
+                         RIFLE_POWER_MULTIPLIER, RIFLE_SPEED_MULTIPLIER, RIFLE_HEALTH_MULTIPLIER,
+                         RIFLE_IMAGE)
+
+    def update(self):
+        if Client.get_data(NETWORK_MOUSE_LEFT_PRESSED):
+            self._shoot()
+        super().update()
+
+class Sniper(LocalGun):
+    def __init__(self):
+        super().__init__(SNIPER_TIME_BETWEEN_SHOTS, SNIPER_AMMO, SNIPER_MAX_AMMO,
+                         SNIPER_POWER_MULTIPLIER, RIFLE_SPEED_MULTIPLIER, SNIPER_HEALTH_MULTIPLIER
+                         , SNIPER_IMAGE)
+        EventListener.add_handler(MOUSE_LEFT_CLICK, self._shoot)
+
+
+class Shotgun(LocalGun):
+    def __init__(self):
+        super().__init__(SHOTGUN_TIME_BETWEEN_SHOTS, SHOTGUN_AMMO, SHOTGUN_MAX_AMMO,
+                         SHOTGUN_POWER_MULTIPLIER, SHOTGUN_SPEED_MULTIPLIER, SHOTGUN_HEALTH_MULTIPLIER,
+                         SHOTGUN_IMAGE)
+        EventListener.add_handler(MOUSE_LEFT_CLICK, self._shoot)
+
+    def __get_bullet_angle(self, bullet_number) -> float:
+        """
+        returns the angle of a bullet from a shotgun (they spread)
+        """
+        place = 1 if bullet_number % 2 == 0 else -1  # if the bullet position is odd it will go down if even it will go up
+        return self._current_angle + bullet_number * SHOTGUN_ANGLE_CHANGE * place
+
+    def _create_bullet_to_shot(self) -> list:
+        bullets = []
+        for i in range(SHOTGUN_BULLET_NUMBER):
+            bullets.append(Bullet(self.rect.x + 5, self.rect.y + 5, CollisionMasks.BULLET, (CollisionMasks.ENEMY,),
+                                  self.__get_bullet_angle(i),
+                                  BULLET_BASE_HEALTH, BULLET_BASE_SPEED * self._gun_speed_multiplier,
+                                  BULLET_BASE_POWER * self._gun_power_multiplier,
+                                  BULLET_IMAGE))
+
+        return bullets
