@@ -50,12 +50,16 @@ class Timer:
         self.__time = start_time
         self.__function_to_activate = function_to_activate
         self.__pause = False  # Timer can be paused
-        self.finish = False
+        self.__finish = False
+
+    @property
+    def finish(self):
+        return self.__finish
 
     def update_timer(self):
         if not self.__pause:
             if self.__time <= 0:
-                self.finish=True
+                self.__finish=True
                 if self.__function_to_activate is not None:
                     self.__function_to_activate()
             else:

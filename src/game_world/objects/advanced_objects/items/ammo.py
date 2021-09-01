@@ -1,9 +1,8 @@
 from src.game_world.objects.advanced_objects.items.item_collector import ItemTypes,Item
 from src.Consts.settings import *
-
-class Coin(Item):
+class Ammo(Item):
     """
-    Coin is an object that gives money
+    ammo is an object that gives you ammo
     """
     def __init__(self, x: int, y: int, collider_width: int, coliider_height: int):
-        super().__init__(x, y, collider_width, coliider_height, 5, ItemTypes.COINS,COIN_IMAGE)
+        super().__init__(x, y, collider_width, coliider_height, 20, ItemTypes.AMMO,AMMO_BOX_IMAGE)

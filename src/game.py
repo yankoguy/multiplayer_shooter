@@ -44,23 +44,26 @@ class Game(metaclass=Singleton):
         # Add game df events
         EventListener.add_handler(GO_TO_MENU_STATE, self.__menu_state)
         EventListener.add_handler(GO_TO_GAME_STATE, self.__game_state)
-        EventListener.add_handler(KEY_DOWN + str(pg.K_ESCAPE), lambda: self.__menu_state(SETTINGS_MENU))
+        EventListener.add_handler(KEY_DOWN + str(pg.K_ESCAPE), lambda: self.__menu_state(SHOP_MENU))
+        EventListener.add_handler(RESET_GAME,self.__reset_game)
 
     def start(self):
         """
         Start running game
         """
-        #self.__menu_state(STARTING_MENU)  # first menu
+        self.__menu_state(STARTING_MENU)  # first menu
         self.__game_loop()
 
     def __update(self):
         """
         Update all the stuff in game
         """
-        if self.__current_menu is None or self.__current_menu == SETTINGS_MENU:
+        if self.__current_menu is None or self.__current_menu == SHOP_MENU:
             # If we are in game state
             self.__game_clock.update()
             self.__world.update()
+            self.__get_40_coins(self.__world.get_player().get_coins())
+            self.__check_if_lost()
 
         elif self.__current_menu == MATCHMAKING_MENU and self.__client.communicate:
             # We are in matchmaking menu and found someone to play with
@@ -68,6 +71,20 @@ class Game(metaclass=Singleton):
 
         self.__camera.update(self.__world.get_player())
 
+    def __get_40_coins(self, coins):
+        if coins >= 40:
+            Client.add_data_to_send(NETWORK_PLAYER_WON, 1)
+            self.__menu_state(WON_MENU)
+            # end game - move to new menu
+
+    def __check_if_lost(self):
+        if Client.get_data(NETWORK_PLAYER_WON):
+            self.__menu_state(LOST_MENU)
+
+    def __reset_game(self):
+        # reconnect to server
+        self.__world.reset()
+        self.__menu_state(STARTING_MENU)
 
     @staticmethod
     def __events():
@@ -81,8 +98,8 @@ class Game(metaclass=Singleton):
         """
         Shows all the object of the game to the screen
         """
-        self.__renderer.render(self.__camera,self.__world.get_objects_to_render())
-        db.show_colliders_object(self.__renderer.screen,self.__world._sprites)
+        self.__renderer.render(self.__camera, self.__world.get_objects_to_render())
+        db.show_colliders_object(self.__renderer.screen, self.__world._sprites)
         pg.display.flip()
 
     def __game_loop(self):
@@ -94,21 +111,20 @@ class Game(metaclass=Singleton):
             self.__update()
             self.__render()
             if self.__client.connected:
-                self.__client.send_data() # Send data to server
-                self.__client.get_input_from_server() # Get new data from server
+                self.__client.send_data()  # Send data to server
+                self.__client.get_input_from_server()  # Get new data from server
 
     def __menu_state(self, menu_name):
         """
         Go into menu state - pause game and show menu
         """
-        if menu_name != SETTINGS_MENU:
+        if menu_name != SHOP_MENU:
             self.__world.hide_all_objects()  # Hide all objects
+
         self.__current_menu = self.__world.menus[menu_name].canvas.show_all()  # Show menu
         self.__current_menu = menu_name
-
         if menu_name == MATCHMAKING_MENU:
-            self.__client.connect_to_server() # If the user is in matchmaking menu try to connect to server and find another player
-
+            self.__client.connect_to_server()  # If the user is in matchmaking menu try to connect to server and find another player
 
     def __game_state(self):
         """

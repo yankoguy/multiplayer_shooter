@@ -5,6 +5,8 @@ from src.core_functionaletize.game_time import GlobalTime
 import math
 from src.core_functionaletize.game_time import Timer
 from src.game_world.objects.advanced_objects.items.coin import Coin
+from src.game_world.objects.advanced_objects.items.ammo import Ammo
+
 from src.core_functionaletize.event_system import EventListener
 
 class BasicEnemy(AliveSprite):
@@ -60,5 +62,11 @@ class BasicEnemy(AliveSprite):
         super().late_update()
 
     def die(self):
-        c = Coin(self.rect.x, self.rect.y, 10, 10, sprite_img=COIN_IMAGE)
+        """
+        when dead create ammo and coin
+        """
+        c = Coin(self.rect.x, self.rect.y, 20, 20)
         EventListener.fire_events(WORLD_ADD_OBJECT,c)
+        a= Ammo(self.rect.x, self.rect.y+20, 20, 20)
+        EventListener.fire_events(WORLD_ADD_OBJECT,a)
+        super().die()

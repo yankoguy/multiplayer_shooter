@@ -49,7 +49,7 @@ class Client(metaclass=Singleton):
         """
         Get new information from the server
         """
-        rlist, _, _ = select.select([self.__client_socket], [], [])
+        rlist, _, _ = select.select([self.__client_socket], [], [],1)
         if rlist:
             # Read from server and update data
             data = self.__client_socket.recv(1024)

@@ -23,12 +23,3 @@ class EventListener:
         if cls.__handlers.get(handler_name) is not None:
             for handler in cls.__handlers.get(handler_name):
                 handler(*event_information)
-
-
-def event_handle(func):
-    """
-    A decorator used to check if a function can be handler or not - by checking if it can get arguments.
-    """
-    def wrapper(*args, **kwargs):
-        func(*args)
-    return wrapper

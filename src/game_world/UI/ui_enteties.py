@@ -59,20 +59,22 @@ class Button(BaseObject):
         return self._image, self._rect
 
 
-    def __check_if_got_pressed(self, mouse_x_pos, mouse_y_pos):
+    def __check_if_got_pressed(self):
         """
         Function that gets called whenever left mouse button is clicked
         """
+        mouse_x_pos,mouse_y_pos = pg.mouse.get_pos()
+
         if utilitiez.on_object(self.rect.x, self.rect.y, self.rect.width, self.rect.height, mouse_x_pos, mouse_y_pos,
                                MOUSE_WIDTH, MOUSE_HEIGHT):
-            self.__on_click(mouse_x_pos, mouse_y_pos)
+            self.__on_click()
 
-    def __on_click(self, mouse_x_pos, mouse_y_pos):
+    def __on_click(self):
         """
         Function that gets called if the mouse clicked on button
         """
         if self.enable:
-            self.__function_to_activate(mouse_x_pos, mouse_y_pos)
+            self.__function_to_activate()
 
 
 class Canvas:

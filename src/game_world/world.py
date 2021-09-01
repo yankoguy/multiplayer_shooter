@@ -3,7 +3,7 @@ from src.Consts.settings import *
 from src.game_world.objects.basic_objects import RenderAbleObj, UpdatedObject, Sprite
 from src.game_world.objects.advanced_objects.Player.player import LocalPlayer, OnlinePlayer
 from src.game_world.objects.advanced_objects.enemies.enemy import BasicEnemy
-from src.game_world.UI.menus import StartingMenu, SettingsMenu, Setting2sMenu, MatchMakingMenu
+from src.game_world.UI.menus import StartingMenu, SettingsMenu, Setting2sMenu, MatchMakingMenu,ShopMenu,WonMenu,LostMenu
 from src.game_world.Map.map import Map
 from src.game_world.objects.advanced_objects.gun.basic_gun import Pistol, OnlinePistol, Rifle, OnlineRifle
 from src.core_functionaletize.event_system import EventListener
@@ -33,9 +33,6 @@ class World(metaclass=Singleton):
 
         # Event
         EventListener.add_handler(WORLD_ADD_OBJECT, self.__add_rederable_object)
-        EventListener.add_handler(KEY_DOWN + str(pg.K_b), self.new_gun_pistol)  # remove this
-        EventListener.add_handler(KEY_DOWN + str(pg.K_c), self.new_gun_rifle)  # remove this
-       # EventListener.add_handler(KEY_DOWN + str(pg.K_b), self.new_gun)  # remove this
 
         self.__create_world()
 
@@ -43,16 +40,26 @@ class World(metaclass=Singleton):
     def menus(self):
         return self.__menus
 
+
+    def reset(self):
+        self.__objects = []  # All the object that should be rendered
+        self.__updated_objects = []  # All the object that should be updated
+        self._sprites = []  # All the sprites entities in game
+        self.__player = None  # The player is an important object for the rest of the game
+        self.spawners = []
+        self.__objects += self.__map.tiles  # Add tiles to map
+        self.__create_world()
+
     def __create_world(self):
         # Create texts--------------------------------
 
         # Create object in game--------------------------------------
 
-        g = Pistol()
+        g = Pistol(STARTING_AMMO)
 
         self.__add_rederable_object(g)
 
-        g2 = OnlinePistol()
+        g2 = OnlinePistol(STARTING_AMMO)
 
         self.__add_rederable_object(g2)
 
@@ -66,14 +73,15 @@ class World(metaclass=Singleton):
 
         self.__add_rederable_object(p2)
 
-        self.spawners.append(Spawner(0, 0, 1, [self.__player, p2]))
-        self.spawners.append(Spawner(1000, 1000, 1, [self.__player, p2]))
-        self.spawners.append(Spawner(2000, 2000, 1, [self.__player, p2]))
+        self.spawners.append(Spawner(0, 0, 2, [self.__player, p2]))
+        self.spawners.append(Spawner(1000, 1000, 3, [self.__player, p2]))
+        self.spawners.append(Spawner(2000, 2000, 5, [self.__player, p2]))
 
-        c = Coin(300, 300, 10, 10, sprite_img=COIN_IMAGE)
-        self.__add_rederable_object(c)
-
+        if not self.menus:
+            self.create_menus()
         # Create menus------------------------------------------
+
+    def create_menus(self):
         starting_menu = StartingMenu()
         starting_menu.canvas.apply_function_on_UI_objects(self.__add_rederable_object)
         self.__menus[STARTING_MENU] = starting_menu
@@ -81,6 +89,10 @@ class World(metaclass=Singleton):
         matchmaking_menu = MatchMakingMenu()
         matchmaking_menu.canvas.apply_function_on_UI_objects(self.__add_rederable_object)
         self.__menus[MATCHMAKING_MENU] = matchmaking_menu
+
+        shop_menu = ShopMenu()
+        shop_menu.canvas.apply_function_on_UI_objects(self.__add_rederable_object)
+        self.__menus[SHOP_MENU] = shop_menu
 
         settings_menu = SettingsMenu()
         settings_menu.canvas.apply_function_on_UI_objects(self.__add_rederable_object)
@@ -90,22 +102,13 @@ class World(metaclass=Singleton):
         settings_menu2.canvas.apply_function_on_UI_objects(self.__add_rederable_object)
         self.__menus[SETTINGS2_MENU] = settings_menu2
 
-    # remove this
-    def new_gun_pistol(self):
-        g = Pistol()
-        Client.add_data_to_send(NETWORK_NEW_GUN,1)
-        self.__add_rederable_object(g)
-        self.__player.switch_gun(g)
-    # remove this
+        won_menu = WonMenu()
+        won_menu.canvas.apply_function_on_UI_objects(self.__add_rederable_object)
+        self.__menus[WON_MENU] = won_menu
 
-    # remove this
-    def new_gun_rifle(self):
-        g = Rifle()
-        Client.add_data_to_send(NETWORK_NEW_GUN,2)
-        self.__add_rederable_object(g)
-        self.__player.switch_gun(g)
-    # remove this
-
+        lost_menu = LostMenu()
+        lost_menu.canvas.apply_function_on_UI_objects(self.__add_rederable_object)
+        self.__menus[LOST_MENU] = lost_menu
 
     def get_player(self):
         return self.__player
